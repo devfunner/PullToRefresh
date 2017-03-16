@@ -25,9 +25,4 @@ public class MenuVH extends RecyclerView.ViewHolder{
             mTitleView.setText(info);
         }
     }
-
-    public void onRecycled() {
-
-    }
-
 }

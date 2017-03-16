@@ -3,4 +3,6 @@
     <string name="pull_to_refresh_pull_up_label">上拉刷新</string>
     <string name="pull_to_refresh_refreshing_label">正在刷新</string>
     <string name="pull_to_refresh_release_label">释放立即刷新</string>
+    <string name="no_networdk">无网络，请检查网络配置</string>
+    <string name="refresh_network">刷新</string>
 </resources>

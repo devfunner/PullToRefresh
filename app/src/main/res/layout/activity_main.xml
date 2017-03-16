@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="120dp"
-        app:mode="1">
+        app:mode="3">
 
     </com.liuyt.pulltorefresh.imp.PullToRefreshRecyclerView>
 

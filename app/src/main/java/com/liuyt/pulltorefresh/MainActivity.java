@@ -7,15 +7,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.liuyt.pulltorefresh.imp.PullToRefreshRecyclerView;
+import com.liuyt.pulltorefresh.widget.PullToRefreshBase;
 
 public class MainActivity extends AppCompatActivity {
+    static final String TAG = "MainActivity";
     PullToRefreshRecyclerView recycler;
     MenuAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -34,10 +38,21 @@ public class MainActivity extends AppCompatActivity {
 
         recycler = (PullToRefreshRecyclerView) findViewById(R.id.prv);
         adapter = new MenuAdapter(this);
-        recycler.getRefreshableView().setLayoutManager(new LinearLayoutManager(this, OrientationHelper.VERTICAL,false));
+        recycler.getRefreshableView().setLayoutManager(new LinearLayoutManager(this, OrientationHelper.VERTICAL, false));
         recycler.getRefreshableView().setAdapter(adapter);
-        recycler.setRefreshing(true);
+//        recycler.setRefreshing(true);//显示加载情况下的UI
+        recycler.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.d(TAG,"onRefresh() ");
+            }
 
+            @Override
+            public void onLoadMore() {
+                Log.d(TAG,"onLoadMore() ");
+            }
+        });
+//        recycler.setRefreshing(true);
     }
 
     @Override
@@ -56,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            recycler.onRefreshComplete();//完成加载
             return true;
         }
 

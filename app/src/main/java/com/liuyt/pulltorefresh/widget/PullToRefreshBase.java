@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -26,11 +27,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
     static final int RELEASE_TO_REFRESH = 0x1;
     static final int REFRESHING = 0x2;
     static final int MANUAL_REFRESHING = 0x3;
-
+    //pull mode
     public static final int MODE_PULL_DOWN_TO_REFRESH = 0x1;
     public static final int MODE_PULL_UP_TO_REFRESH = 0x2;
     public static final int MODE_BOTH = 0x3;
-
 
     private int touchSlop;
     private float initialMotionY;
@@ -52,20 +52,39 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
     private int headerHeight;
     private final Handler handler = new Handler();
     private OnRefreshListener onRefreshListener;
+    private OnLastItemVisibleListener onLastItemVisibleListener;
     private SmoothScrollRunnable currentSmoothScrollRunnable;
 
 
     public PullToRefreshBase(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public PullToRefreshBase(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public PullToRefreshBase(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context,attrs);
+        init(context, attrs);
+    }
+
+    /**
+     * set listener for refresh callback
+     *
+     * @param listener
+     */
+    public void setOnRefreshListener(OnRefreshListener listener) {
+        onRefreshListener = listener;
+    }
+
+    /**
+     * set listener for last item visible callback
+     *
+     * @param listener
+     */
+    public void setOnLastItemVisibleListener(OnLastItemVisibleListener listener) {
+        onLastItemVisibleListener = listener;
     }
 
     /**
@@ -208,7 +227,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
                     isBeingDragged = false;
                     if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
                         setRefreshingInternal(true);
-                        onRefreshListener.onRefresh();
+                        float offsetY = event.getY() - initialMotionY;
+                        if (offsetY > 0) {
+                            onRefreshListener.onRefresh();
+                        } else if (offsetY < 0) {
+                            onRefreshListener.onLoadMore();
+                        }
                     } else {
                         smoothScrollTo(0);
                     }
@@ -524,7 +548,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
     }
 
     public static interface OnRefreshListener {
+        /**
+         * pull down to refresh
+         */
         public void onRefresh();
+
+        /**
+         * pull up to load more
+         */
+        public void onLoadMore();
     }
 
     public static interface OnLastItemVisibleListener {
@@ -573,7 +605,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
                 final int deltaY = Math.round((scrollFromY - scrollToY)
                         * interpolator.getInterpolation(normalizedTime / 1000f));
                 this.currentY = scrollFromY - deltaY;
-//                setHeaderScroll(currentY);
+                setHeaderScroll(currentY);
             }
             // If we're not at the target Y, keep going...
             if (continueRunning && scrollToY != currentY) {

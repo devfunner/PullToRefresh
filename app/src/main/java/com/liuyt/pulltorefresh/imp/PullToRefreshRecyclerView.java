@@ -14,7 +14,7 @@ import com.liuyt.pulltorefresh.R;
 import com.liuyt.pulltorefresh.widget.PullToRefreshBase;
 
 /**
- * Created by user on 17-3-16.
+ * Created by liuyt on 17-3-16.
  */
 
 public class PullToRefreshRecyclerView extends PullToRefreshBase<RecyclerView> {

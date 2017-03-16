@@ -11,18 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by user on 17-3-3.
+ * Created by liuyt on 17-3-3.
  */
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuVH>{
     private final static String TAG = "MenuAdapter";
-    private List<Boolean> isClicks;
-    private int mSelPos = 0;
-//    private ArrayList<MenuInfo> mDatas;
     private LayoutInflater mInflater;
     private Context mContext;
-
-    public ViewPager mPager;
 
     private List<String> mFeedList;
 
@@ -30,7 +25,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuVH>{
         mInflater = LayoutInflater.from(context);
         this.mContext = context;
         mFeedList = new ArrayList<String>();
-        for (int i=0;i<0;i++){
+        for (int i=0;i<10;i++){
             mFeedList.add("测试"+i);
         }
     }
