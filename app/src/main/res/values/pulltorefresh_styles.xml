@@ -1,0 +1,9 @@
+<resources>
+
+    <declare-styleable name="PullToRefresh">
+        <attr name="headerBackground" format="color"/>
+        <attr name="adapterViewBackground" format="color"/>
+        <attr name="headerTextColor" format="color"/>
+        <attr name="mode" format="integer"/>
+    </declare-styleable>
+</resources>
