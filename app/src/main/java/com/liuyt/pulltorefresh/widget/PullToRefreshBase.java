@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import com.liuyt.pulltorefresh.R;
 
 /**
- * Created by user on 17-3-16.
+ * Created by liuyt on 17-3-16.
  */
 
 public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
@@ -31,6 +31,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
     public static final int MODE_PULL_DOWN_TO_REFRESH = 0x1;
     public static final int MODE_PULL_UP_TO_REFRESH = 0x2;
     public static final int MODE_BOTH = 0x3;
+    public static final int MODE_BOTH_NONE = 0x4;
 
     private int touchSlop;
     private float initialMotionY;
@@ -39,7 +40,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
     private boolean isBeingDragged = false;
 
     private int state = PULL_TO_REFRESH;
-    private int mode = MODE_PULL_DOWN_TO_REFRESH;
+    private int workmode = MODE_BOTH;
     private int currentMode;
 
     private boolean disableScrollingWhileRefreshing = true;
@@ -134,10 +135,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
      *
      * @param releaseLabel - String to display
      */
-    public void setReleaseLabel(String releaseLabel) {
+    public void setHeaderReleaseLabel(String releaseLabel) {
         if (null != headerLayout) {
             headerLayout.setReleaseLabel(releaseLabel);
         }
+    }
+    public void setFooterReleaseLabel(String releaseLabel) {
         if (null != footerLayout) {
             footerLayout.setReleaseLabel(releaseLabel);
         }
@@ -148,10 +151,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
      *
      * @param pullLabel - String to display
      */
-    public void setPullLabel(String pullLabel) {
+    public void setHeaderPullLabel(String pullLabel) {
         if (null != headerLayout) {
             headerLayout.setPullLabel(pullLabel);
         }
+    }
+    public void setFooterPullLabel(String pullLabel) {
         if (null != footerLayout) {
             footerLayout.setPullLabel(pullLabel);
         }
@@ -162,15 +167,24 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
      *
      * @param refreshingLabel - String to display
      */
-    public void setRefreshingLabel(String refreshingLabel) {
+    public void setHeaderRefreshingLabel(String refreshingLabel) {
         if (null != headerLayout) {
             headerLayout.setRefreshingLabel(refreshingLabel);
         }
+    }
+    public void setFooterRefreshingLabel(String refreshingLabel) {
         if (null != footerLayout) {
             footerLayout.setRefreshingLabel(refreshingLabel);
         }
     }
 
+    public void setFooterEndLabel(String endMsg){
+        if (null != footerLayout) {
+            footerLayout.setRefreshingLabel(endMsg);
+            footerLayout.setPullLabel(endMsg);
+            footerLayout.setReleaseLabel(endMsg);
+        }
+    }
     public final void setRefreshing() {
         this.setRefreshing(true);
     }
@@ -268,20 +282,20 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
                     final float yDiff = Math.abs(dy);
                     final float xDiff = Math.abs(event.getX() - lastMotionX);
                     if (yDiff > touchSlop && yDiff > xDiff) {
-                        if ((mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) && dy >= 0.0001f
+                        if ((workmode == MODE_PULL_DOWN_TO_REFRESH || workmode == MODE_BOTH) && dy >= 0.0001f
                                 && isReadyForPullDown()) {
                             lastMotionY = y;
                             isBeingDragged = true;
-                            if (mode == MODE_BOTH) {
+//                            if (mode == MODE_BOTH) {
                                 currentMode = MODE_PULL_DOWN_TO_REFRESH;
-                            }
-                        } else if ((mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) && dy <= 0.0001f
+//                            }
+                        } else if ((workmode == MODE_PULL_UP_TO_REFRESH || workmode == MODE_BOTH) && dy <= 0.0001f
                                 && isReadyForPullUp()) {
                             lastMotionY = y;
                             isBeingDragged = true;
-                            if (mode == MODE_BOTH) {
+//                            if (mode == MODE_BOTH) {
                                 currentMode = MODE_PULL_UP_TO_REFRESH;
-                            }
+//                            }
                         }
                     }
                 }
@@ -335,8 +349,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
         return headerHeight;
     }
 
-    protected final int getMode() {
-        return mode;
+    protected final int getWorkMode() {
+        return workmode;
+    }
+
+    protected void setWorkMode(int mode) {
+        this.workmode = mode;
     }
 
     /**
@@ -405,7 +423,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
         // Styleables from XML
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
         if (a.hasValue(R.styleable.PullToRefresh_mode)) {
-            mode = a.getInteger(R.styleable.PullToRefresh_mode, MODE_PULL_DOWN_TO_REFRESH);
+            workmode = a.getInteger(R.styleable.PullToRefresh_mode, MODE_BOTH);
         }
         // Refreshable View
         // By passing the attrs, we can add ListView/GridView params via XML
@@ -417,7 +435,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
         String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
         String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
         // Add Loading Views
-        if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
+        if (workmode == MODE_PULL_DOWN_TO_REFRESH || workmode == MODE_BOTH) {
             headerLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullDownLabel,
                     refreshingLabel);
             addView(headerLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -425,7 +443,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
             measureView(headerLayout);
             headerHeight = headerLayout.getMeasuredHeight();
         }
-        if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
+        if (workmode == MODE_PULL_UP_TO_REFRESH || workmode == MODE_BOTH) {
             footerLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullUpLabel, refreshingLabel);
             addView(footerLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -451,12 +469,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
         }
         a.recycle();
         // Hide Loading Views
-        switch (mode) {
+        switch (workmode) {
             case MODE_BOTH:
                 setPadding(0, -headerHeight, 0, -headerHeight);
                 break;
             case MODE_PULL_UP_TO_REFRESH:
                 setPadding(0, 0, 0, -headerHeight);
+                break;
+            case MODE_BOTH_NONE:
+                setPadding(0, 0, 0, 0);
                 break;
             case MODE_PULL_DOWN_TO_REFRESH:
             default:
@@ -465,8 +486,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
         }
         // If we're not using MODE_BOTH, then just set currentMode to current
         // mode
-        if (mode != MODE_BOTH) {
-            currentMode = mode;
+        if (workmode != MODE_BOTH) {
+            currentMode = workmode;
         }
     }
 
@@ -536,7 +557,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
     }
 
     private boolean isReadyForPull() {
-        switch (mode) {
+        switch (workmode) {
             case MODE_PULL_DOWN_TO_REFRESH:
                 return isReadyForPullDown();
             case MODE_PULL_UP_TO_REFRESH:

@@ -25,12 +25,17 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuVH>{
         mInflater = LayoutInflater.from(context);
         this.mContext = context;
         mFeedList = new ArrayList<String>();
+//        for (int i=0;i<10;i++){
+//            mFeedList.add("测试"+i);
+//        }
+    }
+
+    public void setupData(){
         for (int i=0;i<10;i++){
             mFeedList.add("测试"+i);
         }
+        notifyDataSetChanged();
     }
-
-
     @Override
     public MenuVH onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.menu_item, parent, false);

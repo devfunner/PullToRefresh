@@ -10,7 +10,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay" android:visibility="gone">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -21,14 +21,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <com.liuyt.pulltorefresh.imp.PullToRefreshRecyclerView
+    <com.liuyt.pulltorefresh.imp.PullableRecyclerView
         android:id="@+id/prv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="120dp"
-        app:mode="3">
+        android:layout_height="match_parent">
 
-    </com.liuyt.pulltorefresh.imp.PullToRefreshRecyclerView>
+    </com.liuyt.pulltorefresh.imp.PullableRecyclerView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -37,5 +35,9 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_email" />
+    <TextView
+        android:id="@+id/txt_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </android.support.design.widget.CoordinatorLayout>

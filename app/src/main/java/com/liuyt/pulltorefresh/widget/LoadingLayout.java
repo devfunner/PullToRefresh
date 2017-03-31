@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.liuyt.pulltorefresh.R;
 
 /**
- * Created by user on 17-3-16.
+ * Created by liuyt on 17-3-16.
  */
 
 public class LoadingLayout extends FrameLayout {
